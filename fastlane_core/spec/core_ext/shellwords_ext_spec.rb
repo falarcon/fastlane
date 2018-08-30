@@ -96,19 +96,6 @@ shellescape_testcases = [
       'other'   => '3'
     }
   },
-  # https://github.com/ruby/ruby/blob/ac543abe91d7325ace7254f635f34e71e1faaf2e/test/test_shellwords.rb#L120-L125
-  {
-    'it' => '(#8) on string with multibyte characters',
-    'it_result' => {
-      'windows' => "doesn't change it",
-      'other'   => 'escapes the characters'
-    },
-    'str' => "あい",
-    'expect' => {
-      'windows' => "\xE3\x81\x82\xE3\x81\x84", # which is actually あい but... encoding *shrug
-      'other'   => "\\あ\\い"
-    }
-  },
   # TODO:
   # single quotes in string
   # \ in string
