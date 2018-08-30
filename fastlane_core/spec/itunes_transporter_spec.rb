@@ -21,8 +21,8 @@ describe FastlaneCore do
         "-m upload",
         '-u "fabric.devtools@gmail.com"',
         "-p #{password}",
-        "-f '/tmp/my.app.id.itmsp'",
-        "-t 'Signiant'",
+        "-f \"/tmp/my.app.id.itmsp\"",
+        "-t Signiant",
         "-k 100000",
         ("-WONoPause true" if FastlaneCore::Helper.windows?),
         ("-itc_provider #{provider_short_name}" if provider_short_name)
