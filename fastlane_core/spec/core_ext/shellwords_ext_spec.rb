@@ -11,6 +11,7 @@
 # shellescape
 
 shellescape_testcases = [
+  # baseline
   {
     'it' => '(#1) on simple string',
     'it_result' => {
@@ -35,6 +36,7 @@ shellescape_testcases = [
       'other'   => '\'\''
     }
   },
+  # spaces
   {
     'it' => '(#3) on string with spaces',
     'it_result' => {
@@ -47,6 +49,7 @@ shellescape_testcases = [
       'other'   => 'string\ with\ spaces'
     }
   },
+  # double quotes
   {
     'it' => '(#4) on simple string that is already wrapped in double quotes',
     'it_result' => {
@@ -96,21 +99,53 @@ shellescape_testcases = [
       'other'   => '3'
     }
   },
-  # TODO:
-  # single quotes in string
-  # \ in string
-  # / in string
-  # special characters in string
-
-  # "builds/test/1337 (fastlane)" => builds/test/1337\\ \\(fastlane\\)
-  # \'builds/test/1337\'
-
-  # message = "message with 'quotes' (and parens)"
-  # escaped_message = "message\\ with\\ \\'quotes\\'\\ \\(and\\ parens\\)"
-
-  # password: '\"test password\"',
-  # expect(result[0]).to eq(%(security create-keychain -p \\\"test\\ password\\\" ~/Library/Keychains/test.keychain))
-
+  # single quotes
+  {
+    'it' => '(#8) on simple string that is already wrapped in single quotes',
+    'it_result' => {
+      'windows' => "doesn't touch it",
+      'other'   => 'escapes the single quotes with <backslash>'
+    },
+    'str' => "'normal_string_without_spaces'",
+    'expect' => {
+      'windows' => "'normal_string_without_spaces'",
+      'other'   => "\\'normal_string_without_spaces\\'"
+    }
+  },
+  {
+    'it' => '(#9) on string with spaces that is already wrapped in single quotes',
+    'it_result' => {
+      'windows' => "wraps in double quotes",
+      'other'   => 'escapes the single quotes and spaces with <backslash>'
+    },
+    'str' => "'string with spaces already wrapped in single quotes'",
+    'expect' => {
+      'windows' => "\"'string with spaces already wrapped in single quotes'\"",
+      'other'   => "\\'string\\ with\\ spaces\\ already\\ wrapped\\ in\\ single\\ quotes\\'"
+    }
+  },
+  {
+    'it' => '(#10) string with spaces and single quotes',
+    'it_result' => {
+      'windows' => "wraps in double quotes and leaves single quotes",
+      'other'   => 'escapes the single quotes and spaces with <backslash>'
+    },
+    'str' => "string with spaces and 'single' quotes",
+    'expect' => {
+      'windows' => "\"string with spaces and 'single' quotes\"",
+      'other'   => 'string\ with\ spaces\ and\ \\\'single\\\'\ quotes'
+    }
+    # some characters
+    # \ in string
+    # / in string
+    # special characters in string
+    # space + parens
+      # "builds/test/1337 (fastlane)" => builds/test/1337\\ \\(fastlane\\)
+      # \'builds/test/1337\'
+    # space + single quotes + parens
+      # message = "message with 'quotes' (and parens)"
+      # escaped_message = "message\\ with\\ \\'quotes\\'\\ \\(and\\ parens\\)"
+  },
 ]
 
 # test shellescape Windows implementation directly
@@ -405,12 +440,12 @@ def confirm_shell_unescapes_string_correctly(string, escaped)
   end
 end
 
-# remove double quote pairs
+# remove (double and single) quote pairs
 # un-double-double quote resulting string
 def simulate_windows_shell_unwrapping(string)
-  regex = /^"(([^"])(\S*)([^"]))"$/
+  regex = /^("|')(([^"])(\S*)([^"]))("|')$/
   unless string.to_s.match(regex).nil?
-    string = string.to_s.match(regex)[1] # get only part in quotes
+    string = string.to_s.match(regex)[2] # get only part in quotes
     string.to_s.gsub!('""', '"') # remove double double quotes
   end
   return string
