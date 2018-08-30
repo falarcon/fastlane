@@ -454,5 +454,6 @@ end
 # remove all double quotes completely
 def simulate_normal_shell_unwrapping(string)
   string.gsub!('"', '')
+  string.gsub!('\'', '')
   return string
 end
