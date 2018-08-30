@@ -417,11 +417,11 @@ def confirm_shell_unescapes_string_correctly(string, escaped)
   compare_string = string.to_s.dup
 
   if FastlaneCore::CommandExecutor.which('grep')
-    #if FastlaneCore::Helper.windows?
+    if FastlaneCore::Helper.windows?
       compare_string = simulate_windows_shell_unwrapping(compare_string)
-    #elsif
-    #  compare_string = simulate_normal_shell_unwrapping(compare_string)
-    #end
+    elsif
+      compare_string = simulate_normal_shell_unwrapping(compare_string)
+    end
     compare_command = "grep 'foo' #{escaped}"
     expected_compare_error = "grep: " + compare_string + ": No such file or directory"
   elsif FastlaneCore::CommandExecutor.which('find')
